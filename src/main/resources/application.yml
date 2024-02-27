@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/coupon?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 1234
+    hikari:
+      maximum-pool-size: 40
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        default_batch_fetch_size: 50
+        use_sql_comments: true
+        format_sql: true
+        show_sql: true
+    open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+logging:
+  level:
+    org:
+      hibernate:
+        sql: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
