@@ -1,4 +1,4 @@
-package org.example.coupon.repository;
+package org.example.api.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

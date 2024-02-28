@@ -1,10 +1,10 @@
-package org.example.coupon.service;
+package org.example.api.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.coupon.domain.Coupon;
-import org.example.coupon.repository.CouponCountRepository;
-import org.example.coupon.repository.CouponRepository;
+import org.example.api.producer.CouponCreateProducer;
+import org.example.api.repository.CouponCountRepository;
+import org.example.api.repository.CouponRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class ApplyService {
     private final CouponRepository couponRepository;
     private final CouponCountRepository couponCountRepository;
+    private final CouponCreateProducer couponCreateProducer;
 
     public void apply(Long userId) {
         Long count = couponCountRepository.increment();
@@ -20,8 +21,8 @@ public class ApplyService {
         if (count > 1000) {
             return;
         }
-        couponRepository.save(Coupon.builder()
-                .userId(userId)
-                .build());
+
+        couponCreateProducer.create(userId);
+
     }
 }

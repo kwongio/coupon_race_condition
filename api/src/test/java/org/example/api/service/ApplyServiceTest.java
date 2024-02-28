@@ -1,6 +1,6 @@
-package org.example.coupon.service;
+package org.example.api.service;
 
-import org.example.coupon.repository.CouponRepository;
+import org.example.api.repository.CouponRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,8 +37,8 @@ class ApplyServiceTest {
             });
         }
         countDownLatch.await();
+        Thread.sleep(5000);
         assertThat(couponRepository.count()).isEqualTo(1000);
         System.out.println(couponRepository.count());
     }
-
 }

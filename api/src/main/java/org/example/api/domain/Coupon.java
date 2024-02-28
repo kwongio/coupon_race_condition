@@ -1,4 +1,4 @@
-package org.example.coupon.domain;
+package org.example.api.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
