@@ -1,6 +1,7 @@
 package org.example.api.service;
 
 import org.example.api.repository.CouponRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,8 +22,9 @@ class ApplyServiceTest {
     @Autowired
     private CouponRepository couponRepository;
 
+    @DisplayName("여러명 응모")
     @Test
-    void apply() throws InterruptedException {
+    void apply1() throws InterruptedException {
         int threadCount = 1000;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
@@ -39,6 +41,27 @@ class ApplyServiceTest {
         countDownLatch.await();
         Thread.sleep(5000);
         assertThat(couponRepository.count()).isEqualTo(100);
+        System.out.println(couponRepository.count());
+    }
+
+    @DisplayName("한명당 한개의 쿠폰만 발급")
+    @Test
+    void apply2() throws InterruptedException {
+        int threadCount = 1000;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    applyService.apply(1L);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await();
+        Thread.sleep(5000);
+        assertThat(couponRepository.count()).isEqualTo(1);
         System.out.println(couponRepository.count());
     }
 }

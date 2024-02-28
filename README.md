@@ -85,3 +85,44 @@ docker exec -it kafka kafka-topics.sh --bootstrap-server localhost:9092 --create
 ### 카프카 컨슈머 실행
 docker exec -it kafka kafka-console-consumer.sh --topic coupon_create --bootstrap-server localhost:9092 --key-deserializer "org.apache.kafka.common.serialization.StringDeserializer" --value-deserializer "org.apache.kafka.common.serialization.LongDeserializer"
 
+
+
+### 1인 1개 쿠폰 발급하기
+userId와 couponType을 유니크로 잡아서 하는방식이 있다.
+실용적이지는 않음
+
+```java
+
+
+package org.example.consumer.domain;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+public class Coupon {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long userId;
+    
+    @Builder
+    public Coupon(Long id, Long userId) {
+        this.id = id;
+        this.userId = userId;
+    }
+}
+
+
+```
+
+![img_7.png](img_7.png)
