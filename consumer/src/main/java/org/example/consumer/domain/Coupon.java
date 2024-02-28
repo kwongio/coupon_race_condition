@@ -19,8 +19,6 @@ public class Coupon {
 
     private Long userId;
 
-    private Long couponType;
-
     @Builder
     public Coupon(Long id, Long userId) {
         this.id = id;

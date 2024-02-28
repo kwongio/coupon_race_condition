@@ -6,6 +6,8 @@ import org.example.api.producer.CouponCreateProducer;
 import org.example.api.repository.AppliedUserRepository;
 import org.example.api.repository.CouponCountRepository;
 import org.example.api.repository.CouponRepository;
+import org.example.api.repository.RedisLockRepository;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,9 +18,12 @@ public class ApplyService {
     private final CouponCountRepository couponCountRepository;
     private final CouponCreateProducer couponCreateProducer;
     private final AppliedUserRepository appliedUserRepository;
+    private final RedisLockRepository lockRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public void apply(Long userId) {
-        if (appliedUserRepository.add(userId) == 0) {
+    public void apply(Long userId) throws InterruptedException {
+        Long increment = redisTemplate.opsForValue().increment(userId.toString(), 1);
+        if (increment > 5) {
             return;
         }
         Long count = couponCountRepository.increment();
@@ -26,7 +31,6 @@ public class ApplyService {
         if (count > 100) {
             return;
         }
-
         couponCreateProducer.create(userId);
 
     }

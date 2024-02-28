@@ -33,6 +33,8 @@ class ApplyServiceTest {
             executorService.submit(() -> {
                 try {
                     applyService.apply(userId);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 } finally {
                     countDownLatch.countDown();
                 }
@@ -54,6 +56,8 @@ class ApplyServiceTest {
             executorService.submit(() -> {
                 try {
                     applyService.apply(1L);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 } finally {
                     countDownLatch.countDown();
                 }
@@ -62,6 +66,40 @@ class ApplyServiceTest {
         countDownLatch.await();
         Thread.sleep(5000);
         assertThat(couponRepository.count()).isEqualTo(1);
-        System.out.println(couponRepository.count());
+    }
+
+    @DisplayName("한명당 5개 쿠폰만 발급")
+    @Test
+    void apply3() throws InterruptedException {
+        int threadCount = 1000;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    applyService.apply(1L);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    applyService.apply(2L);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await();
+        Thread.sleep(3000);
+        assertThat(couponRepository.countByUserId(1L)).isEqualTo(5);
+        assertThat(couponRepository.countByUserId(2L)).isEqualTo(5);
     }
 }

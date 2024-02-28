@@ -21,7 +21,6 @@ public class CouponCreatedConsumer {
     public void listener(Long userId) {
         try {
             couponRepository.save(Coupon.builder().userId(userId).build());
-
         } catch (Exception e) {
             failEventRepository.save(FailEvent.builder()
                     .userId(userId)
