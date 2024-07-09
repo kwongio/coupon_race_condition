@@ -125,8 +125,6 @@ public class Coupon {
 
 ```
 
-![img_7.png](img_7.png)
-
 
 ### 쿠폰 발급하다가 에러가 발생할때 처리
 
